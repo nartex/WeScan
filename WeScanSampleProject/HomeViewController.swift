@@ -23,8 +23,26 @@ final class HomeViewController: UIViewController {
         label.text = "WeScan"
         label.font = UIFont.systemFont(ofSize: 25.0, weight: .bold)
         label.textAlignment = .center
+        label.textColor = UIColor(red: 64.0 / 255.0, green: 159 / 255.0, blue: 255 / 255.0, alpha: 1.0)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
+    }()
+
+    lazy private var editSwitchLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Allow editing ?"
+        label.textColor = UIColor(red: 64.0 / 255.0, green: 159 / 255.0, blue: 255 / 255.0, alpha: 1.0)
+        label.font = UIFont.systemFont(ofSize: 18.0, weight: .medium)
+        label.textAlignment = .right
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    lazy private var editSwitch: UISwitch = {
+        let editSwitch = UISwitch()
+        editSwitch.isOn = true
+        editSwitch.translatesAutoresizingMaskIntoConstraints = false
+        return editSwitch
     }()
     
     lazy private var scanButton: UIButton = {
@@ -53,6 +71,8 @@ final class HomeViewController: UIViewController {
         view.addSubview(logoImageView)
         view.addSubview(logoLabel)
         view.addSubview(scanButton)
+        view.addSubview(editSwitchLabel)
+        view.addSubview(editSwitch)
     }
     
     private func setupConstraints() {
@@ -90,6 +110,26 @@ final class HomeViewController: UIViewController {
             
             NSLayoutConstraint.activate(scanButtonConstraints)
         }
+
+        if #available(iOS 11.0, *) {
+            let editSwitchConstraints = [
+                editSwitch.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -16),
+                editSwitch.bottomAnchor.constraint(equalTo: scanButton.topAnchor, constant: -16),
+                editSwitch.leftAnchor.constraint(equalTo: editSwitchLabel.rightAnchor, constant: 8),
+                editSwitchLabel.centerYAnchor.constraint(equalTo: editSwitch.centerYAnchor, constant: 0)
+            ]
+            NSLayoutConstraint.activate(editSwitchConstraints)
+        } else {
+            let editSwitchConstraints = [
+                editSwitch.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
+                editSwitch.bottomAnchor.constraint(equalTo: scanButton.topAnchor, constant: -16),
+                editSwitch.leftAnchor.constraint(equalTo: editSwitchLabel.rightAnchor, constant: 8),
+                editSwitchLabel.centerYAnchor.constraint(equalTo: editSwitch.centerYAnchor, constant: 0)
+            ]
+            NSLayoutConstraint.activate(editSwitchConstraints)
+        }
+
+
     }
     
     // MARK: - Actions
@@ -116,6 +156,7 @@ final class HomeViewController: UIViewController {
     
     func scanImage() {
         let scannerViewController = ImageScannerController(delegate: self)
+        scannerViewController.skipImageEdition = !editSwitch.isOn
         present(scannerViewController, animated: true)
     }
     

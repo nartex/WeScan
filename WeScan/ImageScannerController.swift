@@ -44,7 +44,8 @@ public final class ImageScannerController: UINavigationController {
     
     /// The object that acts as the delegate of the `ImageScannerController`.
     weak public var imageScannerDelegate: ImageScannerControllerDelegate?
-    
+    public var skipImageEdition: Bool = false
+
     // MARK: - Life Cycle
     
     /// A black UIView, used to quickly display a black screen when the shutter button is presseed.
@@ -85,12 +86,14 @@ public final class ImageScannerController: UINavigationController {
                 VisionRectangleDetector.rectangle(forImage: ciImage, orientation: orientation) { (quad) in
                     detectedQuad = quad?.toCartesian(withHeight: orientedImage.extent.height)
                     let editViewController = EditScanViewController(image: image, quad: detectedQuad, rotateImage: false)
+                    editViewController.skipImageEdition = self.skipImageEdition
                     self.setViewControllers([editViewController], animated: true)
                 }
             } else {
                 // Use the CIRectangleDetector on iOS 10 to attempt to find a rectangle from the initial image.
                 detectedQuad = CIRectangleDetector.rectangle(forImage: ciImage)?.toCartesian(withHeight: orientedImage.extent.height)
                 let editViewController = EditScanViewController(image: image, quad: detectedQuad, rotateImage: false)
+                editViewController.skipImageEdition = skipImageEdition
                 setViewControllers([editViewController], animated: false)
             }
         }

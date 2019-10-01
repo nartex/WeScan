@@ -304,6 +304,7 @@ extension ScannerViewController: RectangleDetectionDelegateProtocol {
         activityIndicator.stopAnimating()
         
         let editVC = EditScanViewController(image: picture, quad: quad)
+        editVC.skipImageEdition = (navigationController as? ImageScannerController)?.skipImageEdition ?? false
         navigationController?.pushViewController(editVC, animated: false)
         
         shutterButton.isUserInteractionEnabled = true
